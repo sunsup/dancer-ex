@@ -1,4 +1,4 @@
-Welcome to Dancer 2 on OpenShift V3!  It is currently [% timestamp %]
+Welcome to Dancer 2 SU on OpenShift V3!  It is currently [% timestamp %]
 <br>
 <br>
 <form action="/" method="post">
