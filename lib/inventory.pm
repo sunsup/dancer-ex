@@ -6,7 +6,7 @@ use DBI;
 use DBD::mysql;
 
 set template => 'template_toolkit';
-set layout => undef;
+set layout => 'main';
 set views => File::Spec->rel2abs('./views');
 
 sub get_connection{
