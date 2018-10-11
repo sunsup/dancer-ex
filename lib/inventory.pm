@@ -11,6 +11,14 @@ set views => File::Spec->rel2abs('./views');
 set 'username' => 'admin';
 set 'password' => 'password';
 
+set session => "Simple";
+
+hook before => sub {
+    if (!session('user') && request->path !~ m{^/login}) {
+        forward '/login', { requested_path => request->path };
+    }
+};
+
 sub get_connection{
   my $service_name=uc $ENV{'DATABASE_SERVICE_NAME'};
   my $db_host=$ENV{"${service_name}_SERVICE_HOST"};
