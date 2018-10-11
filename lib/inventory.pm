@@ -29,30 +29,18 @@ sub init_db{
   $dbh->do("INSERT INTO foo (name, email) VALUES (" . $dbh->quote("Eric") . ", " . $dbh->quote("eric\@example.com") . ")");
 };
 
-any ['get', 'post'] => '/login' => sub {
-   my $err;
+my $flash;
  
-   if ( request->method() eq "POST" ) {
-     # process form input
-     if ( body_parameters->get('username') ne setting('username') ) {
-       $err = "Invalid username";
-     }
-     elsif ( body_parameters->get('password') ne setting('password') ) {
-       $err = "Invalid password";
-     }
-     else {
-       session 'logged_in' => true;
-       set_flash('You are logged in.');
-       return redirect '/';
-     }
-  }
+sub set_flash {
+    my $message = shift;
+    $flash = $message;
+}
  
-  # display login form
-  template 'login.tt', {
-    'err' => $err,
-  };
-};
-
+sub get_flash {
+    my $msg = $flash;
+    $flash = "";
+    return $msg;
+}
 get '/user/:id' => sub {
     my $timestamp = localtime();
     my $dbh = get_connection();
@@ -117,10 +105,36 @@ get '/health' => sub {
   }
   return "SUCCESS: Database connection appears healthy.";
 };
+any ['get', 'post'] => '/login' => sub {
+    my $err;
+ 
+    if ( request->method() eq "POST" ) {
+        # process form input
+        if ( body_parameters->get('username') ne setting('username') ) {
+            $err = "Invalid username";
+        }
+        elsif ( body_parameters->get('password') ne setting('password') ) {
+            $err = "Invalid password";
+        }
+        else {
+            session 'logged_in' => true;
+            set_flash('You are logged in.');
+            return redirect '/';
+        }
+   }
+ 
+   # display login form
+   template 'login.tt', {
+       'err' => $err,
+   };
+ 
+};
+ 
 get '/logout' => sub {
    app->destroy_session;
    set_flash('You are logged out.');
    redirect '/';
 };
+
 
 true;
