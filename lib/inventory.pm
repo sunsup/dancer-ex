@@ -117,5 +117,10 @@ get '/health' => sub {
   }
   return "SUCCESS: Database connection appears healthy.";
 };
+get '/logout' => sub {
+   app->destroy_session;
+   set_flash('You are logged out.');
+   redirect '/';
+};
 
 true;
