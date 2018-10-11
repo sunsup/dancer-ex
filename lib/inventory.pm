@@ -11,7 +11,7 @@ set views => File::Spec->rel2abs('./views');
 set 'username' => 'admin';
 set 'password' => 'password';
 
-set session => "Simple";
+#set session => "Simple";
 
 hook before => sub {
     if (!session('user') && request->path !~ m{^/login}) {
