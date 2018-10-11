@@ -129,7 +129,7 @@ any ['get', 'post'] => '/login' => sub {
         }
         else {
             session 'logged_in' => true;
-            session user => body_parameters->get('user');
+            session user => body_parameters->get('username');
             set_flash('You are logged in.');
             return redirect '/';
         }
