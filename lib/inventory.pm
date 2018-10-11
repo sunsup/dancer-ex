@@ -11,12 +11,15 @@ set views => File::Spec->rel2abs('./views');
 set 'username' => 'admin';
 set 'password' => 'password';
 
-#set session => "Simple";
+set session => "Simple";
 
 hook before => sub {
     if (!session('user') && request->path !~ m{^/login}) {
         forward '/login', { requested_path => request->path };
     }
+  #THIS WILL ALSO WORK  if ( not session('logged_in') ) {
+   #     send_error("Not logged in", 401);
+   # }
 };
 
 sub get_connection{
@@ -126,6 +129,7 @@ any ['get', 'post'] => '/login' => sub {
         }
         else {
             session 'logged_in' => true;
+            session user => body_parameters->get('user');
             set_flash('You are logged in.');
             return redirect '/';
         }
