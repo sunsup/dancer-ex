@@ -8,6 +8,8 @@ use DBD::mysql;
 set template => 'template_toolkit';
 set layout => 'main';
 set views => File::Spec->rel2abs('./views');
+set 'username' => 'admin';
+set 'password' => 'password';
 
 sub get_connection{
   my $service_name=uc $ENV{'DATABASE_SERVICE_NAME'};
@@ -25,6 +27,30 @@ sub init_db{
 
   $dbh->do("CREATE TABLE foo (id INTEGER not null auto_increment, name VARCHAR(20), email VARCHAR(30), PRIMARY KEY(id))");
   $dbh->do("INSERT INTO foo (name, email) VALUES (" . $dbh->quote("Eric") . ", " . $dbh->quote("eric\@example.com") . ")");
+};
+
+any ['get', 'post'] => '/login' => sub {
+   my $err;
+ 
+   if ( request->method() eq "POST" ) {
+     # process form input
+     if ( body_parameters->get('username') ne setting('username') ) {
+       $err = "Invalid username";
+     }
+     elsif ( body_parameters->get('password') ne setting('password') ) {
+       $err = "Invalid password";
+     }
+     else {
+       session 'logged_in' => true;
+       set_flash('You are logged in.');
+       return redirect '/';
+     }
+  }
+ 
+  # display login form
+  template 'login.tt', {
+    'err' => $err,
+  };
 };
 
 get '/user/:id' => sub {
