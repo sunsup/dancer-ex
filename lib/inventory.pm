@@ -25,7 +25,13 @@ sub get_flash {
     $flash = "";
     return $msg;
 };
-
+hook before_template_render => sub {
+    my $tokens = shift;
+ 
+    $tokens->{'css_url'} = request->base . 'css/style.css';
+    $tokens->{'login_url'} = uri_for('/login');
+    $tokens->{'logout_url'} = uri_for('/logout');
+};
 hook before => sub {
     if (not session('user') && request->path !~ m{^/login}) {
     #if ( not session('logged_in') )  {
