@@ -14,9 +14,9 @@ set 'password' => 'password';
 set session => "Simple";
 
 hook before => sub {
-   # if (!session('user') && request->path !~ m{^/login}) {
-    #    forward '/login', { requested_path => request->path };
-    #}
+  #  if (!session('user') && request->path !~ m{^/login}) {
+   #     forward '/login', { requested_path => request->path };
+   # }
   #THIS WILL ALSO WORK  
     if ( not session('logged_in') ) {
         #send_error("Not logged in", 401);
@@ -47,13 +47,13 @@ my $flash;
 sub set_flash {
     my $message = shift;
     $flash = $message;
-}
+};
  
 sub get_flash {
     my $msg = $flash;
     $flash = "";
     return $msg;
-}
+};
 any ['get', 'post'] => '/login' => sub {
     my $err;
  
