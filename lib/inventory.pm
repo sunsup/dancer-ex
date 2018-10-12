@@ -14,12 +14,13 @@ set 'password' => 'password';
 set session => "Simple";
 
 hook before => sub {
-    if (!session('user') && request->path !~ m{^/login}) {
-        forward '/login', { requested_path => request->path };
+   # if (!session('user') && request->path !~ m{^/login}) {
+    #    forward '/login', { requested_path => request->path };
+    #}
+  #THIS WILL ALSO WORK  
+    if ( not session('logged_in') ) {
+        send_error("Not logged in", 401);
     }
-  #THIS WILL ALSO WORK  if ( not session('logged_in') ) {
-   #     send_error("Not logged in", 401);
-   # }
 };
 
 sub get_connection{
