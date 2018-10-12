@@ -109,7 +109,7 @@ any ['get', 'post'] => '/login' => sub {
     if ( request->method() eq "POST" ) {
         # process form input
         if ( body_parameters->get('username') ne setting('username') ) {
-            $err = "Invalid username ".session('user');
+            $err = "Invalid useRname ";
         }
         elsif ( body_parameters->get('password') ne setting('password') ) {
             $err = "Invalid password";
