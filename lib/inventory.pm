@@ -13,11 +13,40 @@ set 'password' => 'password';
 
 set session => "Simple";
 
+my $flash;
+ 
+sub set_flash {
+    my $message = shift;
+    $flash = $message;
+};
+ 
+sub get_flash {
+    my $msg = $flash;
+    $flash = "";
+    return $msg;
+};
+
 hook before => sub {
-   # if (!session('user') && request->path !~ m{^/login}) {
-    if ( not session('logged_in') )  {
+    if (not session('user') && request->path !~ m{^/login}) {
+    #if ( not session('logged_in') )  {
         forward '/login', { requested_path => request->path };
     }
+};
+get '/' => sub {
+
+    my $dbh = get_connection();
+
+    eval { $dbh->prepare("SELECT * FROM foo")->execute() };
+    init_db($dbh) if $@;
+
+    my $sth = $dbh->prepare("SELECT * FROM foo");
+    $sth->execute();
+
+    my $data = $sth->fetchall_hashref('id');
+    $sth->finish();
+
+    my $timestamp = localtime();
+    template index => {data => $data, timestamp => $timestamp};
 };
   
 get '/secret' => sub { return "Top Secret Stuff here"; };
@@ -31,7 +60,7 @@ get '/login' => sub {
 post '/login' => sub {
     # Validate the username and password they supplied
     if (body_parameters->get('username') eq 'bob' && body_parameters->get('password') eq 'letmein') {
-        session user => body_parameters->get('username');
+        session 'user' => body_parameters->get('username');
         session 'logged_in' => true;
         redirect body_parameters->get('path') || '/';
     } else {
@@ -57,18 +86,7 @@ sub init_db{
   $dbh->do("INSERT INTO foo (name, email) VALUES (" . $dbh->quote("Eric") . ", " . $dbh->quote("eric\@example.com") . ")");
 };
 
-my $flash;
- 
-sub set_flash {
-    my $message = shift;
-    $flash = $message;
-};
- 
-sub get_flash {
-    my $msg = $flash;
-    $flash = "";
-    return $msg;
-};
+
 get '/user/:id' => sub {
     my $timestamp = localtime();
     my $dbh = get_connection();
@@ -82,22 +100,7 @@ get '/user/:id' => sub {
     template user => {timestamp => $timestamp, data => $data};
 };
 
-get '/' => sub {
 
-    my $dbh = get_connection();
-
-    eval { $dbh->prepare("SELECT * FROM foo")->execute() };
-    init_db($dbh) if $@;
-
-    my $sth = $dbh->prepare("SELECT * FROM foo");
-    $sth->execute();
-
-    my $data = $sth->fetchall_hashref('id');
-    $sth->finish();
-
-    my $timestamp = localtime();
-    template index => {data => $data, timestamp => $timestamp};
-};
 
 post '/' => sub {
 
