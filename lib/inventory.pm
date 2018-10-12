@@ -14,13 +14,26 @@ set 'password' => 'password';
 set session => "Simple";
 
 hook before => sub {
-  #  if (!session('user') && request->path !~ m{^/login}) {
-   #     forward '/login', { requested_path => request->path };
-   # }
-  #THIS WILL ALSO WORK  
-    if ( not session('logged_in') ) {
-        #send_error("Not logged in", 401);
+    if (!session('user') && request->path !~ m{^/login}) {
         forward '/login', { requested_path => request->path };
+    }
+};
+  
+get '/secret' => sub { return "Top Secret Stuff here"; };
+ 
+get '/login' => sub {
+    # Display a login page; the original URL they requested is available as
+    # query_parameters->get('requested_path'), so could be put in a hidden field in the form
+    template 'login', { path => query_parameters->get('requested_path') };
+};
+ 
+post '/login' => sub {
+    # Validate the username and password they supplied
+    if (body_parameters->get('username') eq 'bob' && body_parameters->get('password') eq 'letmein') {
+        session user => body_parameters->get('user');
+        redirect body_parameters->get('path') || '/';
+    } else {
+        redirect '/login?failed=1';
     }
 };
 
@@ -101,31 +114,6 @@ post '/' => sub {
 
    my $timestamp = localtime();
    template index => {data => $data, timestamp => $timestamp};
-};
-
-any ['get', 'post'] => '/login' => sub {
-    my $err;
- 
-    if ( request->method() eq "POST" ) {
-        # process form input
-        if ( body_parameters->get('username') ne setting('username') ) {
-            $err = "Invalid useRname ";
-        }
-        elsif ( body_parameters->get('password') ne setting('password') ) {
-            $err = "Invalid password";
-        }
-        else {
-            session 'logged_in' => true;
-            session user => body_parameters->get('username');
-            set_flash('You are logged in.');
-            return redirect '/';
-        }
-   }
- 
-   # display login form
-   template 'login.tt', {
-       'err' => $err,
-   };
 };
 
 get '/health' => sub {
