@@ -30,7 +30,7 @@ get '/login' => sub {
 post '/login' => sub {
     # Validate the username and password they supplied
     if (body_parameters->get('username') eq 'bob' && body_parameters->get('password') eq 'letmein') {
-        session user => body_parameters->get('user');
+        session user => body_parameters->get('username');
         redirect body_parameters->get('path') || '/';
     } else {
         redirect '/login?failed=1';
