@@ -15,7 +15,7 @@ set session => "Simple";
 
 hook before => sub {
    # if (!session('user') && request->path !~ m{^/login}) {
-    if ( not session('logged_in') ) 
+    if ( not session('logged_in') )  {
         forward '/login', { requested_path => request->path };
     }
 };
