@@ -19,7 +19,8 @@ hook before => sub {
     #}
   #THIS WILL ALSO WORK  
     if ( not session('logged_in') ) {
-        send_error("Not logged in", 401);
+        #send_error("Not logged in", 401);
+        forward '/login', { requested_path => request->path };
     }
 };
 
