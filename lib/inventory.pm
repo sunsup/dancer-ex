@@ -54,30 +54,6 @@ sub get_flash {
     $flash = "";
     return $msg;
 };
-any ['get', 'post'] => '/login' => sub {
-    my $err;
- 
-    if ( request->method() eq "POST" ) {
-        # process form input
-        if ( body_parameters->get('username') ne setting('username') ) {
-            $err = "Invalid username ".session('user');
-        }
-        elsif ( body_parameters->get('password') ne setting('password') ) {
-            $err = "Invalid password";
-        }
-        else {
-            session 'logged_in' => true;
-            session user => body_parameters->get('username');
-            set_flash('You are logged in.');
-            return redirect '/';
-        }
-   }
- 
-   # display login form
-   template 'login.tt', {
-       'err' => $err,
-   };
-};
 get '/user/:id' => sub {
     my $timestamp = localtime();
     my $dbh = get_connection();
@@ -125,6 +101,31 @@ post '/' => sub {
 
    my $timestamp = localtime();
    template index => {data => $data, timestamp => $timestamp};
+};
+
+any ['get', 'post'] => '/login' => sub {
+    my $err;
+ 
+    if ( request->method() eq "POST" ) {
+        # process form input
+        if ( body_parameters->get('username') ne setting('username') ) {
+            $err = "Invalid username ".session('user');
+        }
+        elsif ( body_parameters->get('password') ne setting('password') ) {
+            $err = "Invalid password";
+        }
+        else {
+            session 'logged_in' => true;
+            session user => body_parameters->get('username');
+            set_flash('You are logged in.');
+            return redirect '/';
+        }
+   }
+ 
+   # display login form
+   template 'login.tt', {
+       'err' => $err,
+   };
 };
 
 get '/health' => sub {
