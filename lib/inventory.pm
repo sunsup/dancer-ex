@@ -8,7 +8,7 @@ use DBD::mysql;
 set template => 'template_toolkit';
 set layout => 'main';
 set views => File::Spec->rel2abs('./views');
-set 'username' => 'admin';
+set 'username' => 'mainuser';
 set 'password' => 'password';
 
 set session => "Simple";
@@ -58,7 +58,7 @@ any ['get', 'post'] => '/login' => sub {
     if ( request->method() eq "POST" ) {
         # process form input
         if ( body_parameters->get('username') ne setting('username') ) {
-            $err = "Invalid username";
+            $err = "Invalid username ".session('user');
         }
         elsif ( body_parameters->get('password') ne setting('password') ) {
             $err = "Invalid password";
