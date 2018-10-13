@@ -36,7 +36,7 @@ hook before => sub {
     #if (not session('user') && request->path !~ m{^/login}) {
     if ( session('logged_in') )  {
     } else
-        set_flash(session('logged_in'))
+        set_flash(session('user'))
         forward '/login', { requested_path => request->path };
     }
 };
