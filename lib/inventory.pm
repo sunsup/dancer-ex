@@ -67,7 +67,7 @@ get '/login' => sub {
  
 post '/login' => sub {
     # Validate the username and password they supplied
-    if (body_parameters->get('username') eq 'bob' && body_parameters->get('password') eq 'letmein') {
+    if (body_parameters->get('username') eq 'mainuser' && body_parameters->get('password') eq 'password') {
         session 'user' => body_parameters->get('username');
         session 'logged_in' => true;
         redirect body_parameters->get('path') || '/';
