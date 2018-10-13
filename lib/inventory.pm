@@ -33,8 +33,8 @@ hook before_template_render => sub {
     $tokens->{'logout_url'} = uri_for('/logout');
 };
 hook before => sub {
-    if (not session('user') && request->path !~ m{^/login}) {
-    #if ( not session('logged_in') )  {
+    #if (not session('user') && request->path !~ m{^/login}) {
+    if ( not session('logged_in') )  {
         forward '/login', { requested_path => request->path };
     }
 };
