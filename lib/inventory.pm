@@ -35,7 +35,7 @@ hook before_template_render => sub {
 hook before => sub {
     #if (not session('user') && request->path !~ m{^/login}) {
     if ( session('logged_in') )  {
-    } else
+    } else {
         set_flash(session('user'));
         forward '/login', { requested_path => request->path };
     }
