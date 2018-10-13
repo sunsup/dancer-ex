@@ -11,7 +11,7 @@ set views => File::Spec->rel2abs('./views');
 set 'username' => 'mainuser';
 set 'password' => 'password';
 
-set session => "YAML";
+set session => 'YAML';
 
 my $flash;
  
@@ -34,7 +34,9 @@ hook before_template_render => sub {
 };
 hook before => sub {
     #if (not session('user') && request->path !~ m{^/login}) {
-    if ( not session('logged_in') )  {
+    if ( session('logged_in') )  {
+    } else
+        set_flash(session('logged_in'))
         forward '/login', { requested_path => request->path };
     }
 };
@@ -70,7 +72,9 @@ post '/login' => sub {
         session 'logged_in' => true;
         redirect body_parameters->get('path') || '/';
     } else {
-        redirect '/login?failed=1';
+
+               #redirect '/login?failed=1';
+        template 'login', { path => query_parameters->get('requested_path'),msg => get_flash()};
     }
 };
 
