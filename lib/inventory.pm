@@ -36,6 +36,7 @@ hook before => sub {
   #if (not session('user') && request->path !~ m{^/login}) {
   if ( !session('logged_in') )  {
   set_flash('NOT LOGGED IN');
+  template 'login', { path => query_parameters->get('requested_path'),msg => get_flash()};
   } else {
   set_flash('Good to Go '.session('user'));
   }
@@ -131,7 +132,7 @@ post '/' => sub {
    $sth->finish();
 
    my $timestamp = localtime();
-   template index => {data => $data, timestamp => $timestamp};
+   template index => {data => $data, timestamp => $timestamp,msg=>get_flash()};
 };
 
 get '/health' => sub {
