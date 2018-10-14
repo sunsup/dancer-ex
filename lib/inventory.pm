@@ -78,7 +78,7 @@ post '/login' => sub {
         redirect body_parameters->get('path') || '/';
     } else {
    #     redirect '/login?failed=2';
-        template 'login', { path => query_parameters->get('requested_path'),msg => get_flash()};
+        template login => { path => query_parameters->get('requested_path'),msg => get_flash()};
     }
 };
 
