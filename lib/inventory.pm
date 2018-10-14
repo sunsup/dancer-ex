@@ -57,7 +57,7 @@ hook before => sub {
  #       set_flash(session('user'));
  #       forward '/login', { requested_path => request->path };
  #   }
-};
+#};
 get '/' => sub {
     #set_flash(session('user'));
     if ( not session('logged_in') ) {
@@ -198,22 +198,5 @@ get '/logout' => sub {
    set_flash('You are logged out.');
    redirect '/';
 };
-
-hook before => sub {
-    if (!session('user') && request->path !~ m{^/login}) {
-        forward '/login', { requested_path => request->path };
-    }
-};
- 
-get '/' => sub { return "Home Page"; };
- 
-get '/secret' => sub { return "Top Secret Stuff here"; };
- 
-get '/login' => sub {
-    # Display a login page; the original URL they requested is available as
-    # query_parameters->get('requested_path'), so could be put in a hidden field in the form
-    template 'login', { path => query_parameters->get('requested_path') };
-};
-
 
 true;
