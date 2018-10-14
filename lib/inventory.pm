@@ -137,11 +137,13 @@ any ['get', 'post'] => '/login' => sub {
             return redirect '/';
         }
    }
+   
+   template 'login.tt', { path => query_parameters->get('requested_path'),'err' => $err};
  
    # display login form
-   template 'login.tt', {
-       'err' => $err,
-   };
+ #  template 'login.tt', {
+  #     'err' => $err,
+   #};
  
 };
 
@@ -195,6 +197,22 @@ get '/logout' => sub {
    app->destroy_session;
    set_flash('You are logged out.');
    redirect '/';
+};
+
+hook before => sub {
+    if (!session('user') && request->path !~ m{^/login}) {
+        forward '/login', { requested_path => request->path };
+    }
+};
+ 
+get '/' => sub { return "Home Page"; };
+ 
+get '/secret' => sub { return "Top Secret Stuff here"; };
+ 
+get '/login' => sub {
+    # Display a login page; the original URL they requested is available as
+    # query_parameters->get('requested_path'), so could be put in a hidden field in the form
+    template 'login', { path => query_parameters->get('requested_path') };
 };
 
 
