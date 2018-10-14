@@ -11,7 +11,8 @@ set views => File::Spec->rel2abs('./views');
 set 'username' => 'mainuser';
 set 'password' => 'password';
 
-set session => 'YAML';
+#set session => 'YAML';
+set session => 'Simple';
 
 my $flash;
  
@@ -48,6 +49,9 @@ hook before => sub {
 };
 get '/' => sub {
     #set_flash(session('user'));
+    if ( not session('logged_in') ) {
+        set_flash(session('You ought to know, youre not logged in'));
+    }
     my $dbh = get_connection();
 
     eval { $dbh->prepare("SELECT * FROM foo")->execute() };
