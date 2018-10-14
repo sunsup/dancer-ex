@@ -32,14 +32,14 @@ hook before_template_render => sub {
     $tokens->{'login_url'} = uri_for('/login');
     $tokens->{'logout_url'} = uri_for('/logout');
 };
-hook before => sub {
-    #if (not session('user') && request->path !~ m{^/login}) {
-    if ( session('logged_in') )  {
-    } else {
-        set_flash(session('user'));
-        forward '/login', { requested_path => request->path };
-    }
-};
+#hook before => sub {
+ #   #if (not session('user') && request->path !~ m{^/login}) {
+ #   if ( session('logged_in') )  {
+ #   } else {
+ #       set_flash(session('user'));
+ #       forward '/login', { requested_path => request->path };
+ #   }
+#};
 get '/' => sub {
 
     my $dbh = get_connection();
@@ -72,8 +72,8 @@ post '/login' => sub {
         session 'logged_in' => true;
         redirect body_parameters->get('path') || '/';
     } else {
-        redirect '/login?failed=2';
-    #    template 'login', { path => query_parameters->get('requested_path'),msg => get_flash()};
+   #     redirect '/login?failed=2';
+        template 'login', { path => query_parameters->get('requested_path'),msg => get_flash()};
     }
 };
 
