@@ -36,7 +36,7 @@ hook before => sub {
   #if (not session('user') && request->path !~ m{^/login}) {
   if ( !session('logged_in') )  {
   set_flash('NOT LOGGED IN');
-  template 'login', { path => query_parameters->get('requested_path'),msg => get_flash()};
+  template login => { path => query_parameters->get('requested_path'),err => get_flash()};
   } else {
   set_flash('Good to Go '.session('user'));
   }
