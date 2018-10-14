@@ -41,7 +41,7 @@ hook before_template_render => sub {
  #   }
 #};
 get '/' => sub {
-
+set_flash(session('user');
     my $dbh = get_connection();
 
     eval { $dbh->prepare("SELECT * FROM foo")->execute() };
@@ -54,7 +54,7 @@ get '/' => sub {
     $sth->finish();
 
     my $timestamp = localtime();
-    template index => {data => $data, timestamp => $timestamp};
+    template index => {data => $data, timestamp => $timestamp,$msg=>get_flash()};
 };
   
 get '/secret' => sub { return "Top Secret Stuff here"; };
