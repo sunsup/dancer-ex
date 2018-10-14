@@ -11,8 +11,8 @@ set views => File::Spec->rel2abs('./views');
 set 'username' => 'mainuser';
 set 'password' => 'password';
 
-#set session => 'YAML';
-set session => 'Simple';
+set session => 'YAML';
+#set session => 'Simple';
 
 my $flash;
  
