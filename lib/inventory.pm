@@ -37,7 +37,7 @@ hook before => sub {
   if ( !session('logged_in') )  {
   set_flash('NOT LOGGED IN');
   } else {
-  set_flash('Good to Go '.session('user');
+  set_flash('Good to Go '.session('user'));
   }
  #   } else {
  #       set_flash(session('user'));
