@@ -33,6 +33,7 @@ hook before_template_render => sub {
     $tokens->{'login_url'} = uri_for('/login');
     $tokens->{'logout_url'} = uri_for('/logout');
 };
+=pod
 hook before => sub {
   set_flash('Started in hook before');
   #if (not session('user') && request->path !~ m{^/login}) {
@@ -43,6 +44,15 @@ hook before => sub {
   } else {
    set_flash('Good to Go '.session('user'));
   }
+=cut
+hook before => sub {
+  set_flash('Started in hook before');
+  if (!session('user') && request->path !~ m{^/login}) {
+   set_flash('NOT LOGGED IN');
+            # Pass the original path requested along to the handler:
+            forward '/login', { requested_path => request->path };
+   }
+};
  #   } else {
  #       set_flash(session('user'));
  #       forward '/login', { requested_path => request->path };
