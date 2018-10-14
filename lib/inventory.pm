@@ -67,7 +67,7 @@ get '/secret' => sub { return "Top Secret Stuff here"; };
 get '/login' => sub {
     # Display a login page; the original URL they requested is available as
     # query_parameters->get('requested_path'), so could be put in a hidden field in the form
-    template 'login', { path => query_parameters->get('requested_path') };
+    template 'login', { path => query_parameters->get('requested_path'),msg =>get_flash() };
 };
  
 post '/login' => sub {
