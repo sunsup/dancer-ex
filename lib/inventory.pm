@@ -32,16 +32,20 @@ hook before_template_render => sub {
     $tokens->{'login_url'} = uri_for('/login');
     $tokens->{'logout_url'} = uri_for('/logout');
 };
-#hook before => sub {
- #   #if (not session('user') && request->path !~ m{^/login}) {
- #   if ( session('logged_in') )  {
+hook before => sub {
+  #if (not session('user') && request->path !~ m{^/login}) {
+  if ( !session('logged_in') )  {
+  set_flash('NOT LOGGED IN');
+  } else {
+  set_flash('Good to Go '.session('user');
+  }
  #   } else {
  #       set_flash(session('user'));
  #       forward '/login', { requested_path => request->path };
  #   }
-#};
+};
 get '/' => sub {
-set_flash(session('user'));
+#set_flash(session('user'));
     my $dbh = get_connection();
 
     eval { $dbh->prepare("SELECT * FROM foo")->execute() };
