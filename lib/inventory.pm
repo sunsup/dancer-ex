@@ -17,7 +17,7 @@ my $flash;
  
 sub set_flash {
     my $message = shift;
-    $flash = $message;
+    $flash = $flash.":".$message;
 };
  
 sub get_flash {
@@ -33,12 +33,13 @@ hook before_template_render => sub {
     $tokens->{'logout_url'} = uri_for('/logout');
 };
 hook before => sub {
+  set_flash('Started in hook before');
   #if (not session('user') && request->path !~ m{^/login}) {
   if ( !session('logged_in') )  {
-  set_flash('NOT LOGGED IN');
-  template login => { path => query_parameters->get('requested_path'),err => get_flash()};
+   set_flash('NOT LOGGED IN');
+   template login => { path => query_parameters->get('requested_path'),err => get_flash()};
   } else {
-  set_flash('Good to Go '.session('user'));
+   set_flash('Good to Go '.session('user'));
   }
  #   } else {
  #       set_flash(session('user'));
@@ -46,7 +47,7 @@ hook before => sub {
  #   }
 };
 get '/' => sub {
-#set_flash(session('user'));
+    #set_flash(session('user'));
     my $dbh = get_connection();
 
     eval { $dbh->prepare("SELECT * FROM foo")->execute() };
@@ -59,7 +60,25 @@ get '/' => sub {
     $sth->finish();
 
     my $timestamp = localtime();
-    template index => {data => $data, timestamp => $timestamp,msg=>get_flash()};
+    template index => {data => $data, timestamp => $timestamp, msg => get_flash()};
+};
+
+post '/' => sub {
+   my $name = params->{name};
+   my $email = params->{email};
+
+   my $dbh = get_connection();
+   
+   $dbh->do("INSERT INTO foo (name, email) VALUES (" . $dbh->quote($name) . ", " . $dbh->quote($email) . ") ");
+
+   my $sth = $dbh->prepare("SELECT * FROM foo");
+   $sth->execute();
+
+   my $data = $sth->fetchall_hashref('id');
+   $sth->finish();
+
+   my $timestamp = localtime();
+   template index => {data => $data, timestamp => $timestamp,msg=>get_flash()};
 };
   
 get '/secret' => sub { return "Top Secret Stuff here"; };
@@ -113,28 +132,6 @@ get '/user/:id' => sub {
 
     template user => {timestamp => $timestamp, data => $data};
 };
-
-
-
-post '/' => sub {
-
-   my $name = params->{name};
-   my $email = params->{email};
-
-   my $dbh = get_connection();
-   
-   $dbh->do("INSERT INTO foo (name, email) VALUES (" . $dbh->quote($name) . ", " . $dbh->quote($email) . ") ");
-
-   my $sth = $dbh->prepare("SELECT * FROM foo");
-   $sth->execute();
-
-   my $data = $sth->fetchall_hashref('id');
-   $sth->finish();
-
-   my $timestamp = localtime();
-   template index => {data => $data, timestamp => $timestamp,msg=>get_flash()};
-};
-
 get '/health' => sub {
   my $dbh  = get_connection();
   my $ping = $dbh->ping();
@@ -149,9 +146,7 @@ get '/health' => sub {
     return "ERROR: Database did not respond to ping.";
   }
   return "SUCCESS: Database connection appears healthy.";
-};
-
- 
+}; 
 get '/logout' => sub {
    app->destroy_session;
    set_flash('You are logged out.');
