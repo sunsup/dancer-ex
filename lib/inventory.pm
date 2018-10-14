@@ -38,7 +38,8 @@ hook before => sub {
   #if (not session('user') && request->path !~ m{^/login}) {
   if ( !session('logged_in') )  {
    set_flash('NOT LOGGED IN');
-   template login => { path => query_parameters->get('requested_path'),err => get_flash()};
+   #template login => { path => query_parameters->get('requested_path'),err => get_flash()};
+   template 'login.tt', {'err' => get_flash()};
   } else {
    set_flash('Good to Go '.session('user'));
   }
@@ -87,6 +88,7 @@ post '/' => sub {
   
 get '/secret' => sub { return "Top Secret Stuff here"; };
  
+=pod
 get '/login' => sub {
     # Display a login page; the original URL they requested is available as
     # query_parameters->get('requested_path'), so could be put in a hidden field in the form
@@ -104,6 +106,33 @@ post '/login' => sub {
    #     redirect '/login?failed=2';
         template login => { path => query_parameters->get('requested_path'),msg => get_flash()};
     }
+};
+=cut
+any ['get', 'post'] => '/login' => sub {
+    my $err;
+ 
+    if ( request->method() eq "POST" ) {
+        # process form input
+        if ( body_parameters->get('username') ne setting('username') ) {
+            $err = "Invalid username";
+        }
+        elsif ( body_parameters->get('password') ne setting('password') ) {
+            $err = "Invalid password";
+        }
+        else {
+            session 'user' => body_parameters->get('username');
+            session 'logged_in' => true;
+            redirect body_parameters->get('path') || '/';
+            set_flash('You are logged in.');
+            return redirect '/';
+        }
+   }
+ 
+   # display login form
+   template 'login.tt', {
+       'err' => $err,
+   };
+ 
 };
 
 sub get_connection{
