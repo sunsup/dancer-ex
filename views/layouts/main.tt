@@ -1,7 +1,7 @@
 <html>
-<head><title>DemoApp</title></head>
+<head><title>Application</title></head>
 <body>
-  <h1>DemoApp</h1>
+  <h1>Application</h1>
   [% content %]
 </body>
 </html>
