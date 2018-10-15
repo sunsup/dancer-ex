@@ -51,7 +51,9 @@ hook before => sub {
    set_flash('NOT LOGGED IN');
             # Pass the original path requested along to the handler:
             forward '/login', { requested_path => request->path };
-   }
+   } else {
+      set_flash('Good to Go '.session('user'));
+  }
 };
  #   } else {
  #       set_flash(session('user'));
