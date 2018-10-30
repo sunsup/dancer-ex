@@ -18,7 +18,8 @@ my $flash;
  
 sub set_flash {
     my $message = shift;
-    $flash = $flash.":".$message;
+  #  $flash = $flash.":".$message;
+    $flash = $message;
 };
  
 sub get_flash {
